@@ -30,7 +30,7 @@ public class MoviesController : ControllerBase
     public IActionResult CreateMovie([FromBody] Movie movieDto)
     {
         var movie = _dataService.CreateMovie(movieDto);
-        return CreatedAtAction(nameof(GetMovieById), new { id = movie.MovieId }, movie);
+        return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
     }
 
     // PUT: api/movies/{id}

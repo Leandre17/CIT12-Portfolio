@@ -18,7 +18,7 @@ public class BookmarkController : ControllerBase
     [HttpGet("users/{id}/bookmarks")]
     public IActionResult GetUserBookmarks(int id)
     {
-        var bookmarks = _dataService.GetUserBookmarks(id);
+        var bookmarks = _dataService.GetBookmarksByUser(id);
         if (bookmarks == null)
         {
             return NotFound();
@@ -36,7 +36,7 @@ public class BookmarkController : ControllerBase
         }
 
         var bookmark = createBookmarkDto.Adapt<Bookmark>();
-        var createdBookmark = _dataService.CreateUserBookmark(id, bookmark);
+        var createdBookmark = _dataService.AddBookmark(id, bookmark.ItemId);
 
         if (createdBookmark == null)
         {
@@ -56,7 +56,7 @@ public class BookmarkController : ControllerBase
             return NotFound();
         }
 
-        var result = _dataService.DeleteUserBookmark(userId, bookmarkId);
+        var result = _dataService.DeleteBookmark(userId, bookmarkId);
         if (!result)
         {
             return StatusCode(500, "A problem happened while handling your request.");

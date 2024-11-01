@@ -43,7 +43,7 @@ public class UserController : ControllerBase
         }
 
         var userDto = createdUser.Adapt<UserDto>();
-        return CreatedAtAction(nameof(GetUserById), new { id = createdUser.UserId }, userDto);
+        return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, userDto);
     }
 
     [HttpPut("{id}")]
@@ -109,12 +109,8 @@ public class UserController : ControllerBase
     [HttpPost("logout")]
     public IActionResult LogoutUser()
     {
-        // Assuming you have some session or token management to handle logout
-        // This is a placeholder for the actual logout logic
-        // For example, you might invalidate a JWT token or clear a session
-
-        // Placeholder logic for logout
-        bool isLoggedOut = _dataService.LogoutUser();
+        // not implemented in the data service
+        bool isLoggedOut = _dataService.LogoutUser(1);
 
         if (!isLoggedOut)
         {
