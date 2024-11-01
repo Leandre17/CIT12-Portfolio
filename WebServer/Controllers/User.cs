@@ -89,6 +89,7 @@ public class UserController : ControllerBase
 
         return NoContent();
     }
+
     [HttpPost("login")]
     public IActionResult LoginUser([FromBody] LoginUserDto loginUserDto)
     {
@@ -106,6 +107,7 @@ public class UserController : ControllerBase
         var userDto = user.Adapt<UserDto>();
         return Ok(userDto);
     }
+
     [HttpPost("logout")]
     public IActionResult LogoutUser()
     {
