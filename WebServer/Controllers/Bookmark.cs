@@ -1,6 +1,7 @@
 using DataLayer;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using WebServer.Models;
 
 namespace WebApi.Controllers;
 [ApiController]

@@ -1,6 +1,7 @@
 using DataLayer;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using WebServer.Models;
 
 namespace WebApi.Controllers;
 [ApiController]
@@ -44,6 +45,7 @@ public class UserController : ControllerBase
         var userDto = createdUser.Adapt<UserDto>();
         return CreatedAtAction(nameof(GetUserById), new { id = createdUser.UserId }, userDto);
     }
+
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
     {
@@ -59,9 +61,9 @@ public class UserController : ControllerBase
         }
 
         updateUserDto.Adapt(existingUser);
-        var updatedUser = _dataService.UpdateUser(existingUser);
-
-        if (updatedUser == null)
+        var IsUpdatedUser = _dataService.UpdateUser(existingUser);
+        var updatedUser = _dataService.GetUserById(id);
+        if (IsUpdatedUser)
         {
             return StatusCode(500, "A problem happened while handling your request.");
         }
@@ -69,6 +71,7 @@ public class UserController : ControllerBase
         var userDto = updatedUser.Adapt<UserDto>();
         return Ok(userDto);
     }
+
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
