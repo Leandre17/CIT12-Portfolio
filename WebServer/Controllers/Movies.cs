@@ -38,11 +38,11 @@ public class MoviesController : ControllerBase
     public IActionResult UpdateMovie(string id, [FromBody] Movie movieDto)
     {
         var updatedMovie = _dataService.UpdateMovie(id, movieDto);
-        if (updatedMovie == null)
+        if (!updatedMovie)
         {
             return NotFound();
         }
-        return Ok(updatedMovie);
+        return Ok();
     }
 
     // DELETE: api/movies/{id}

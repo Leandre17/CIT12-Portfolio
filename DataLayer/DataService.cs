@@ -8,10 +8,78 @@ using System.Threading.Tasks;
 namespace DataLayer;
 public class DataService : IDataService
 {
-    public User AuthenticateUser(string username, string password)
+    public User CreateUser(User user)
     {
         var db = new NorthwindContext();
-        User user = db.Users.FirstOrDefault(u => u.Name == username);
+        db.Users.Add(user);
+        db.SaveChanges();
+        return user;
+    }
+
+    public bool DeleteUser(int userId)
+    {
+        var db = new NorthwindContext();
+        var user = db.Users.Find(userId);
+        if (user == null) return false;
+
+        db.Users.Remove(user);
+        db.SaveChanges();
+        return true;
+    }
+
+    public bool LogoutUser(int userId)
+    {
+        return true;
+        // Implement logout logic here if needed
+    }
+
+    public IEnumerable<Movie> GetMoviesByYear(int year)
+    {
+        var db = new NorthwindContext();
+        return db.Movies.Where(m => m.Year == year).ToList();
+    }
+
+    public Movie CreateMovie(Movie movie)
+    {
+        var db = new NorthwindContext();
+        db.Movies.Add(movie);
+        db.SaveChanges();
+        return movie;
+    }
+
+    public bool UpdateMovie(string movieId, Movie updatedMovie)
+    {
+        var db = new NorthwindContext();
+        var movie = db.Movies.Find(movieId);
+        if (movie == null) return false;
+
+        movie.Title = updatedMovie.Title;
+        movie.Genre = updatedMovie.Genre;
+        movie.Year = updatedMovie.Year;
+        db.SaveChanges();
+        return true;
+    }
+
+    public bool DeleteMovie(string movieId)
+    {
+        var db = new NorthwindContext();
+        var movie = db.Movies.Find(movieId);
+        if (movie == null) return false;
+
+        db.Movies.Remove(movie);
+        db.SaveChanges();
+        return true;
+    }
+
+    public Bookmark? GetUserBookmark(int userId, int bookmarkId)
+    {
+        var db = new NorthwindContext();
+        return db.Bookmarks.FirstOrDefault(b => b.UserId == userId && b.Id == bookmarkId);
+    }
+    public User? AuthenticateUser(string username, string password)
+    {
+        var db = new NorthwindContext();
+        User? user = db.Users.FirstOrDefault(u => u.Name == username);
         if (user == null) return null;
 
         if (user.Password == password)
@@ -41,7 +109,7 @@ public class DataService : IDataService
         return newUser;
     }
 
-    public User GetUserById(int userId)
+    public User? GetUserById(int userId)
     {
         var db = new NorthwindContext();
         return db.Users.Find(userId);
@@ -60,7 +128,7 @@ public class DataService : IDataService
         return true;
     }
 
-    public Movie GetMovieById(string movieId)
+    public Movie? GetMovieById(string movieId)
     {
         var db = new NorthwindContext();
         return db.Movies.Find(movieId);
