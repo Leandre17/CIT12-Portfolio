@@ -5,7 +5,7 @@ using WebServer.Models;
 
 namespace WebApi.Controllers;
 [ApiController]
-[Route("api/")]
+[Route("api/users/{userId}/bookmarks/")]
 public class BookmarkController : ControllerBase
 {
     private readonly IDataService _dataService;
@@ -15,7 +15,7 @@ public class BookmarkController : ControllerBase
         _dataService = dataService;
     }
 
-    [HttpGet("users/{id}/bookmarks")]
+    [HttpGet]
     public IActionResult GetUserBookmarks(int id)
     {
         var bookmarks = _dataService.GetBookmarksByUser(id);
@@ -27,7 +27,7 @@ public class BookmarkController : ControllerBase
         return Ok(bookmarkDtos);
     }
 
-    [HttpPost("users/{id}/bookmarks")]
+    [HttpPost]
     public IActionResult CreateUserBookmark(int id, [FromBody] CreateBookmarkDto createBookmarkDto)
     {
         if (createBookmarkDto == null)
@@ -47,7 +47,7 @@ public class BookmarkController : ControllerBase
         return CreatedAtAction(nameof(GetUserBookmarks), new { id = id }, bookmarkDto);
     }
 
-    [HttpDelete("users/{userId}/bookmarks/{bookmarkId}")]
+    [HttpDelete("{bookmarkId}")]
     public IActionResult DeleteUserBookmark(int userId, int bookmarkId)
     {
         var bookmark = _dataService.GetUserBookmark(userId, bookmarkId);
