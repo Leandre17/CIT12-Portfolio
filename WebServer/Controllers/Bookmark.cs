@@ -36,7 +36,7 @@ public class BookmarkController : ControllerBase
         }
 
         var bookmark = createBookmarkDto.Adapt<Bookmark>();
-        var createdBookmark = _dataService.AddBookmark(id, bookmark.ItemId);
+        var createdBookmark = _dataService.AddBookmark(id, bookmark.ItemId ?? string.Empty);
 
         if (createdBookmark == null)
         {
