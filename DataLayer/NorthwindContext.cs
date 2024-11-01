@@ -24,7 +24,7 @@ internal class NorthwindContext : DbContext
         string pwd = Env.GetString("DB_PASSWORD");
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-        optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
+        optionsBuilder.UseNpgsql($"host=localhost;db=IMDB;uid=postgres;pwd=");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +34,7 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<User>().Property(u => u.Id).HasColumnName("user_id");
         modelBuilder.Entity<User>().Property(u => u.Name).HasColumnName("username");
         modelBuilder.Entity<User>().Property(u => u.Email).HasColumnName("email");
+        modelBuilder.Entity<User>().Property(u => u.Password).HasColumnName("password");
 
         modelBuilder.Entity<Movie>().ToTable("title_basics");
         modelBuilder.Entity<Movie>().HasKey(m => m.Id);
