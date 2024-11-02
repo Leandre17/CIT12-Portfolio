@@ -39,6 +39,12 @@ public class DataService : IDataService
         return db.Movies.Where(m => m.Year == year).ToList();
     }
 
+    public IEnumerable<Movie> GetMoviesByTitle(string title)
+    {
+        var db = new NorthwindContext();
+        return db.string_search(title, 1).ToList();
+    }
+
     public Movie CreateMovie(Movie movie)
     {
         var db = new NorthwindContext();

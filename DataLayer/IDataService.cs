@@ -21,6 +21,7 @@ public interface IDataService
     IEnumerable<Movie> GetAllMovies();
     IEnumerable<Movie> GetMoviesByGenre(string genre);
     IEnumerable<Movie> GetMoviesByYear(string year);
+    IEnumerable<Movie> GetMoviesByTitle(string title);
     Movie CreateMovie(Movie movie);
     bool UpdateMovie(string movieId, Movie movie);
     bool DeleteMovie(string movieId);

@@ -59,32 +59,35 @@ public class MoviesController : ControllerBase
 
     // GET: api/movies
     [HttpGet]
-    public IActionResult GetMovies([FromQuery] string? genre, [FromQuery] string? year, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public IActionResult GetMovies([FromQuery] string? genre, [FromQuery] string? year, [FromQuery] string? title, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
+        var movies = null as IQueryable<Movie>;
         try
         {
+            if (title != null)
+            {
+                movies = _dataService.GetMoviesByTitle(title).AsQueryable();
+            }
+            else
+            {
+                movies = _dataService.GetAllMovies().AsQueryable();
+            }
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            if (pageSize > 100) pageSize = 100;  // Set a reasonable maximum
-
-            var movies = _dataService.GetAllMovies().AsQueryable();
+            if (pageSize > 100) pageSize = 100;
 
             if (!string.IsNullOrEmpty(genre))
             {
                 movies = movies.Where(m => m.Genre != null &&
                     m.Genre.Contains(genre, StringComparison.OrdinalIgnoreCase));
             }
-
             if (!string.IsNullOrEmpty(year))
             {
                 movies = movies.Where(m => m.Year == year);
             }
 
             var totalMovies = movies.Count();
-            var pagedMovies = movies
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            var pagedMovies = movies.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             var baseUrl = "/api/movies?";
             var queryParams = new List<string>();
@@ -99,7 +102,6 @@ public class MoviesController : ControllerBase
             if (!string.IsNullOrEmpty(baseQueryString))
                 baseQueryString += "&";
 
-            // Create the result object with HATEOAS links
             var result = new
             {
                 TotalMovies = totalMovies,
@@ -129,4 +131,5 @@ public class MoviesController : ControllerBase
             return StatusCode(500, new { error = "An error occurred while retrieving movies." });
         }
     }
+    
 }

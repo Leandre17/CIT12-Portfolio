@@ -43,6 +43,12 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<Movie>().Property(m => m.Title).HasColumnName("primarytitle");
         modelBuilder.Entity<Movie>().Property(m => m.Year).HasColumnName("startyear");
         modelBuilder.Entity<Movie>().Property(m => m.Genre).HasColumnName("genres");
+        modelBuilder.HasDbFunction(
+             methodInfo: typeof(NorthwindContext).GetMethod(nameof(string_search)),
+             builderAction: builder =>
+             {
+                 builder.HasName("string_search");
+             });
 
         modelBuilder.Entity<Bookmark>().ToTable("bookmarks");
         modelBuilder.Entity<Bookmark>().HasKey(b => b.Id);
@@ -56,4 +62,6 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<UserRating>().Property(ur => ur.MovieId).HasColumnName("tconst");
         modelBuilder.Entity<UserRating>().Property(ur => ur.Rating).HasColumnName("rating");
     }
+    public IQueryable<Movie> string_search(string searchTitle, int userId)
+        => FromExpression(() => string_search(searchTitle, userId));
 }
