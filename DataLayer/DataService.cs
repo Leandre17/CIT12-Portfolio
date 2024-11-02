@@ -137,7 +137,25 @@ public class DataService : IDataService
     public IEnumerable<Movie> GetAllMovies()
     {
         var db = new NorthwindContext();
-        return db.Movies.ToList();
+        try
+        {
+            return db.Movies
+                 .AsNoTracking()
+                 .Where(m => !string.IsNullOrWhiteSpace(m.Title))
+                 .Select(m => new Movie
+                 {
+                     Id = m.Id,
+                     Title = m.Title.Trim(),
+                     Genre = !string.IsNullOrWhiteSpace(m.Genre) ? m.Genre.Trim() : null,
+                    //  Year = m.Year
+                 })
+                 .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetAllMovies: {ex}");
+            throw;
+        }
     }
 
     public IEnumerable<Movie> GetMoviesByGenre(string genre)

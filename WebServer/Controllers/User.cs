@@ -17,8 +17,9 @@ public class UserController : ControllerBase
         _dataService = dataService;
     }
 
+    [HttpGet]
     [HttpGet("{id}")]
-    public IActionResult GetUserById(int id)
+    public IActionResult GetUserById(int id = 1)
     {
         var user = _dataService.GetUserById(id);
         if (user == null)

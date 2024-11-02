@@ -57,37 +57,76 @@ public class MoviesController : ControllerBase
         return NoContent();
     }
 
-    public IActionResult GetMovies([FromQuery] string genre, [FromQuery] int? year, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    // GET: api/movies
+    [HttpGet]
+    public IActionResult GetMovies([FromQuery] string? genre, [FromQuery] int? year, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var movies = _dataService.GetAllMovies();
-
-        if (!string.IsNullOrEmpty(genre))
+        try
         {
-            movies = movies.Where(m => m.Genre == genre).ToList();
-        }
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;  // Set a reasonable maximum
 
-        if (year.HasValue)
-        {
-            movies = movies.Where(m => m.Year == year.Value).ToList();
-        }
+            var movies = _dataService.GetAllMovies().AsQueryable();
 
-        var totalMovies = movies.Count();
-        var pagedMovies = movies.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-        var result = new
-        {
-            TotalMovies = totalMovies,
-            Page = page,
-            PageSize = pageSize,
-            Movies = pagedMovies,
-            _links = new
+            if (!string.IsNullOrEmpty(genre))
             {
-                self = new { href = $"/api/movies?page={page}&pageSize={pageSize}" },
-                next = page * pageSize < totalMovies ? new { href = $"/api/movies?page={page + 1}&pageSize={pageSize}" } : null,
-                previous = page > 1 ? new { href = $"/api/movies?page={page - 1}&pageSize={pageSize}" } : null
+                movies = movies.Where(m => m.Genre != null &&
+                    m.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase));
             }
-        };
 
-        return Ok(result);
+            if (year.HasValue)
+            {
+                movies = movies.Where(m => m.Year == year.Value);
+            }
+
+            var totalMovies = movies.Count();
+            var pagedMovies = movies
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var baseUrl = "/api/movies?";
+            var queryParams = new List<string>();
+
+            if (!string.IsNullOrEmpty(genre))
+                queryParams.Add($"genre={Uri.EscapeDataString(genre)}");
+
+            if (year.HasValue)
+                queryParams.Add($"year={year.Value}");
+
+            var baseQueryString = string.Join("&", queryParams);
+            if (!string.IsNullOrEmpty(baseQueryString))
+                baseQueryString += "&";
+
+            // Create the result object with HATEOAS links
+            var result = new
+            {
+                TotalMovies = totalMovies,
+                Page = page,
+                PageSize = pageSize,
+                Movies = pagedMovies,
+                _links = new
+                {
+                    self = new
+                    {
+                        href = $"{baseUrl}{baseQueryString}page={page}&pageSize={pageSize}"
+                    },
+                    next = page * pageSize < totalMovies
+                        ? new { href = $"{baseUrl}{baseQueryString}page={page + 1}&pageSize={pageSize}" }
+                        : null,
+                    previous = page > 1
+                        ? new { href = $"{baseUrl}{baseQueryString}page={page - 1}&pageSize={pageSize}" }
+                        : null
+                }
+            };
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            // Log the error
+            return StatusCode(500, new { error = "An error occurred while retrieving movies." });
+        }
     }
 }
