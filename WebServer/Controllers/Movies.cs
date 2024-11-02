@@ -132,4 +132,11 @@ public class MoviesController : ControllerBase
         }
     }
     
+    // GET: api/movies/search/{title}
+    [HttpGet("search")]
+    public IActionResult SearchMovies([FromQuery] string q)
+    {
+        var movies = _dataService.GetMoviesByTitle(q);
+        return Ok(movies);
+    }
 }
