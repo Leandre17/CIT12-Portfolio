@@ -139,4 +139,16 @@ public class MoviesController : ControllerBase
         var movies = _dataService.GetMoviesByTitle(q);
         return Ok(movies);
     }
+
+    // GET: api/movies/{id}/ratings
+    [HttpGet("{id}/ratings")]
+    public IActionResult GetMovieRatings(string id)
+    {
+        var ratings = _dataService.GetMovieRatings(id);
+        if (ratings == null)
+        {
+            return NotFound();
+        }
+        return Ok(ratings);
+    }
 }

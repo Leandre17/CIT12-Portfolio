@@ -25,6 +25,7 @@ public interface IDataService
     Movie CreateMovie(Movie movie);
     bool UpdateMovie(string movieId, Movie movie);
     bool DeleteMovie(string movieId);
+    double GetMovieRatings(string movieId);
 
     // bookmark methods
     IEnumerable<Bookmark> GetBookmarksByUser(int userId);

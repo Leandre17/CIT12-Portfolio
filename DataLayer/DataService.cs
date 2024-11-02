@@ -266,5 +266,10 @@ public class DataService : IDataService
         return true;
     }
 
+    public double GetMovieRatings(string movieId)
+    {
+        var db = new NorthwindContext();
+        return db.UserRatings.Where(r => r.MovieId == movieId).Average(r => r.Rating);
+    }
 }
 
