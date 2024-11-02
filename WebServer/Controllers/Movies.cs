@@ -59,7 +59,7 @@ public class MoviesController : ControllerBase
 
     // GET: api/movies
     [HttpGet]
-    public IActionResult GetMovies([FromQuery] string? genre, [FromQuery] int? year, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public IActionResult GetMovies([FromQuery] string? genre, [FromQuery] string? year, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         try
         {
@@ -72,12 +72,12 @@ public class MoviesController : ControllerBase
             if (!string.IsNullOrEmpty(genre))
             {
                 movies = movies.Where(m => m.Genre != null &&
-                    m.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase));
+                    m.Genre.Contains(genre, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (year.HasValue)
+            if (!string.IsNullOrEmpty(year))
             {
-                movies = movies.Where(m => m.Year == year.Value);
+                movies = movies.Where(m => m.Year == year);
             }
 
             var totalMovies = movies.Count();
@@ -92,8 +92,8 @@ public class MoviesController : ControllerBase
             if (!string.IsNullOrEmpty(genre))
                 queryParams.Add($"genre={Uri.EscapeDataString(genre)}");
 
-            if (year.HasValue)
-                queryParams.Add($"year={year.Value}");
+            if (!string.IsNullOrEmpty(year))
+                queryParams.Add($"year={year}");
 
             var baseQueryString = string.Join("&", queryParams);
             if (!string.IsNullOrEmpty(baseQueryString))
@@ -123,7 +123,7 @@ public class MoviesController : ControllerBase
 
             return Ok(result);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log the error
             return StatusCode(500, new { error = "An error occurred while retrieving movies." });

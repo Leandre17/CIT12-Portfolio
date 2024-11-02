@@ -41,8 +41,7 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<Movie>().Property(m => m.Id).HasColumnName("tconst");
         // modelBuilder.Entity<Movie>().Property(m => m.TitleType).HasColumnName("titletype");
         modelBuilder.Entity<Movie>().Property(m => m.Title).HasColumnName("primarytitle");
-        modelBuilder.Entity<Movie>().Property(m => m.Year).HasColumnName("startyear")
-            .HasConversion(v => v.ToString(), v => int.Parse(v ?? "0"));
+        modelBuilder.Entity<Movie>().Property(m => m.Year).HasColumnName("startyear");
         modelBuilder.Entity<Movie>().Property(m => m.Genre).HasColumnName("genres");
 
         modelBuilder.Entity<Bookmark>().ToTable("bookmarks");

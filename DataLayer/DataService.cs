@@ -33,7 +33,7 @@ public class DataService : IDataService
         // Implement logout logic here if needed
     }
 
-    public IEnumerable<Movie> GetMoviesByYear(int year)
+    public IEnumerable<Movie> GetMoviesByYear(string year)
     {
         var db = new NorthwindContext();
         return db.Movies.Where(m => m.Year == year).ToList();
@@ -147,7 +147,7 @@ public class DataService : IDataService
                      Id = m.Id,
                      Title = m.Title.Trim(),
                      Genre = !string.IsNullOrWhiteSpace(m.Genre) ? m.Genre.Trim() : null,
-                    //  Year = m.Year
+                     Year = m.Year
                  })
                  .ToList();
         }
