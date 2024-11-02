@@ -35,6 +35,9 @@ public interface IDataService
 
     // rating methods
     UserRating AddUserRating(int userId, string movieId, int rating);
+    UserRating? GetRatingById(int ratingId);
+    bool UpdateUserRating(UserRating rating);
+    bool DeleteUserRating(int ratingId);
     IEnumerable<UserRating> GetRatingsByUser(int userId);
     float GetAverageRatingForMovie(string movieId);
 }

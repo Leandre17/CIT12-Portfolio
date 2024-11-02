@@ -238,5 +238,33 @@ public class DataService : IDataService
         return (float)db.UserRatings.Where(r => r.MovieId == movieId).Average(r => r.Rating);
     }
 
+    public UserRating? GetRatingById(int ratingId)
+    {
+        var db = new NorthwindContext();
+        return db.UserRatings.Find(ratingId);
+    }
+
+    public bool UpdateUserRating(UserRating rating)
+    {
+        var db = new NorthwindContext();
+        var existingRating = db.UserRatings.Find(rating.UserId, rating.MovieId);
+        if (existingRating == null) return false;
+
+        existingRating.Rating = rating.Rating;
+        db.SaveChanges();
+        return true;
+    }
+
+    public bool DeleteUserRating(int ratingId)
+    {
+        var db = new NorthwindContext();
+        var rating = db.UserRatings.Find(ratingId);
+        if (rating == null) return false;
+
+        db.UserRatings.Remove(rating);
+        db.SaveChanges();
+        return true;
+    }
+
 }
 

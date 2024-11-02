@@ -18,13 +18,13 @@ internal class NorthwindContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         Env.Load();
-        string host = Env.GetString("DB_HOST");
-        string db = Env.GetString("DB_NAME");
-        string uid = Env.GetString("DB_USER");
-        string pwd = Env.GetString("DB_PASSWORD");
+        string host = Env.GetString("DB_HOST") ?? "localhost";
+        string db = Env.GetString("DB_NAME") ?? "IMDB";
+        string uid = Env.GetString("DB_USER") ?? "postgres";
+        string pwd = Env.GetString("DB_PASSWORD") ?? "";
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-        optionsBuilder.UseNpgsql($"host=localhost;db=IMDB;uid=postgres;pwd=");
+        optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
