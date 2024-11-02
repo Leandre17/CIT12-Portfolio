@@ -1,7 +1,7 @@
 namespace DataLayer;
 public class Title
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public string? Type { get; set; }
     public string? PrimaryTitle { get; set; }
     public string? OriginalTitle { get; set; }
@@ -14,9 +14,8 @@ public class Title
 
 public class Movie 
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public string? Title { get; set; }
     public int Year { get; set; }
     public string? Genre { get; set; }
-    public int Rating { get; set; }
 }

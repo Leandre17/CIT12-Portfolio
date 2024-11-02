@@ -16,7 +16,7 @@ public class MoviesController : ControllerBase
 
     // GET: api/movies/{id}
     [HttpGet("{id}")]
-    public IActionResult GetMovieById(string id)
+    public IActionResult GetMovieByIdWSL(string id)
     {
         var movie = _dataService.GetMovieById(id);
         if (movie == null)
@@ -30,7 +30,7 @@ public class MoviesController : ControllerBase
     public IActionResult CreateMovie([FromBody] Movie movieDto)
     {
         var movie = _dataService.CreateMovie(movieDto);
-        return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+        return CreatedAtAction(nameof(GetMovieByIdWSL), new { id = movie.Id }, movie);
     }
 
     // PUT: api/movies/{id}
