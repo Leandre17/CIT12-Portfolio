@@ -16,10 +16,10 @@ public class BookmarkController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetUserBookmarks(int id)
+    public IActionResult GetUserBookmarks(int userId)
     {
-        var bookmarks = _dataService.GetBookmarksByUser(id);
-        if (bookmarks == null)
+        var bookmarks = _dataService.GetBookmarksByUser(userId);
+        if (!bookmarks.Any())
         {
             return NotFound();
         }
@@ -28,7 +28,7 @@ public class BookmarkController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateUserBookmark(int id, [FromBody] CreateBookmarkDto createBookmarkDto)
+    public IActionResult CreateUserBookmark(int userId, [FromBody] CreateBookmarkDto createBookmarkDto)
     {
         if (createBookmarkDto == null)
         {
@@ -36,7 +36,7 @@ public class BookmarkController : ControllerBase
         }
 
         var bookmark = createBookmarkDto.Adapt<Bookmark>();
-        var createdBookmark = _dataService.AddBookmark(id, bookmark.ItemId ?? string.Empty);
+        var createdBookmark = _dataService.AddBookmark(userId, bookmark.ItemId ?? string.Empty);
 
         if (createdBookmark == null)
         {
@@ -44,7 +44,7 @@ public class BookmarkController : ControllerBase
         }
 
         var bookmarkDto = createdBookmark.Adapt<BookmarkDto>();
-        return CreatedAtAction(nameof(GetUserBookmarks), new { id = id }, bookmarkDto);
+        return CreatedAtAction(nameof(GetUserBookmarks), new { id = userId }, bookmarkDto);
     }
 
     [HttpDelete("{bookmarkId}")]
