@@ -14,14 +14,15 @@ internal class NorthwindContext : DbContext
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Bookmark> Bookmarks { get; set; }
     public DbSet<UserRating> UserRatings { get; set; }
+    public DbSet<Actor> Actors { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         Env.Load();
-        string host = Env.GetString("DB_HOST") ?? "localhost";
-        string db = Env.GetString("DB_NAME") ?? "IMDB";
-        string uid = Env.GetString("DB_USER") ?? "postgres";
-        string pwd = Env.GetString("DB_PASSWORD") ?? "";
+        string host = Env.GetString("DB_HOST");
+        string db = Env.GetString("DB_DATABASE");
+        string uid = Env.GetString("DB_USERNAME");
+        string pwd = Env.GetString("DB_PASSWORD");
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
         optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
@@ -61,6 +62,15 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<UserRating>().Property(ur => ur.UserId).HasColumnName("user_id");
         modelBuilder.Entity<UserRating>().Property(ur => ur.MovieId).HasColumnName("tconst");
         modelBuilder.Entity<UserRating>().Property(ur => ur.Rating).HasColumnName("rating");
+
+        modelBuilder.Entity<Actor>().ToTable("name_basics");
+        modelBuilder.Entity<Actor>().HasKey(a => a.NConst);
+        modelBuilder.Entity<Actor>().Property(a => a.NConst).HasColumnName("nconst");
+        modelBuilder.Entity<Actor>().Property(a => a.PrimaryName).HasColumnName("primaryname");
+        modelBuilder.Entity<Actor>().Property(a => a.BirthYear).HasColumnName("birthyear");
+        modelBuilder.Entity<Actor>().Property(a => a.DeathYear).HasColumnName("deathyear");
+        modelBuilder.Entity<Actor>().Property(a => a.PrimaryProfession).HasColumnName("primaryprofession");
+        modelBuilder.Entity<Actor>().Property(a => a.KnownForTitles).HasColumnName("knownfortitles");
     }
     public IQueryable<Movie> string_search(string searchTitle, int userId)
         => FromExpression(() => string_search(searchTitle, userId));

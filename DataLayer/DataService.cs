@@ -271,5 +271,11 @@ public class DataService : IDataService
         var db = new NorthwindContext();
         return db.UserRatings.Where(r => r.MovieId == movieId).Average(r => r.Rating);
     }
+
+    public IEnumerable<Actor> GetActorsInMovie(string movieId)
+    {
+        var db = new NorthwindContext();
+        return db.Actors.Where(a => a.KnownForTitles.Contains(movieId)).ToList();
+    }
 }
 

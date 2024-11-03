@@ -151,4 +151,16 @@ public class MoviesController : ControllerBase
         }
         return Ok(ratings);
     }
+
+    // GET: api/movies/{id}/actors
+    [HttpGet("{id}/crew")]
+    public IActionResult GetActorsInMovie(string id)
+    {
+        var actors = _dataService.GetActorsInMovie(id);
+        if (actors == null)
+        {
+            return NotFound();
+        }
+        return Ok(actors);
+    }
 }
