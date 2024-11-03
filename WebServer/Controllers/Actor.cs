@@ -16,16 +16,16 @@ namespace WebServer.Controllers
         }
 
         [HttpGet]
-        public  IActionResult GetActors([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public IActionResult GetActors([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var actors =  _dataService.GetActors(page, pageSize);
+            var actors = _dataService.GetActors(page, pageSize);
             return Ok(actors);
         }
 
         [HttpGet("{id}")]
-        public  IActionResult GetActor(string id)
+        public IActionResult GetActor(string id)
         {
-            var actor =  _dataService.GetActorById(id);
+            var actor = _dataService.GetActorById(id);
             if (actor == null)
             {
                 return NotFound();
@@ -34,46 +34,46 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("search")]
-        public  IActionResult SearchActors([FromQuery] string q)
+        public IActionResult SearchActors([FromQuery] string q)
         {
-            var actors =  _dataService.SearchActors(q);
+            var actors = _dataService.SearchActors(q);
             return Ok(actors);
         }
 
         [HttpGet("{id}/movies")]
-        public  IActionResult GetActorMovies(string id)
+        public IActionResult GetActorMovies(string id)
         {
-            var movies =  _dataService.GetActorMovies(id);
+            var movies = _dataService.GetActorMovies(id);
             return Ok(movies);
         }
 
         [HttpPost]
-        public  IActionResult AddActor([FromBody] Actor actor)
+        public IActionResult AddActor([FromBody] Actor actor)
         {
-            var createdActor =  _dataService.AddActor(actor);
+            var createdActor = _dataService.AddActor(actor);
             return CreatedAtAction(nameof(GetActor), new { id = createdActor.NConst }, createdActor);
         }
 
         [HttpPut("{id}")]
-        public  IActionResult UpdateActor(string id, [FromBody] Actor actor)
+        public IActionResult UpdateActor(string id, [FromBody] Actor actor)
         {
-            var updatedActor =  _dataService.UpdateActor(id, actor);
+            var updatedActor = _dataService.UpdateActor(id, actor);
             if (!updatedActor)
             {
                 return NotFound();
             }
-            return Ok(updatedActor);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
-        public  IActionResult DeleteActor(string id)
+        public IActionResult DeleteActor(string id)
         {
-            var deleted =  _dataService.DeleteActor(id);
+            var deleted = _dataService.DeleteActor(id);
             if (!deleted)
             {
                 return NotFound();
             }
-            return NoContent();
+            return Ok();
         }
     }
 }

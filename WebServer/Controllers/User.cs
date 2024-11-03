@@ -65,14 +65,11 @@ public class UserController : ControllerBase
 
         updateUserDto.Adapt(existingUser);
         var IsUpdatedUser = _dataService.UpdateUser(existingUser);
-        var updatedUser = _dataService.GetUserById(id);
         if (IsUpdatedUser)
         {
             return StatusCode(500, "A problem happened while handling your request.");
         }
-
-        var userDto = updatedUser.Adapt<UserDto>();
-        return Ok(userDto);
+        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -90,7 +87,7 @@ public class UserController : ControllerBase
             return StatusCode(500, "A problem happened while handling your request.");
         }
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPost("login")]
@@ -122,6 +119,6 @@ public class UserController : ControllerBase
             return StatusCode(500, "A problem happened while handling your request.");
         }
 
-        return NoContent();
+        return Ok();
     }
 }

@@ -54,7 +54,7 @@ public class MoviesController : ControllerBase
         {
             return NotFound();
         }
-        return NoContent();
+        return Ok();
     }
 
     // GET: api/movies

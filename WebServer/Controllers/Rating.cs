@@ -52,7 +52,7 @@ namespace WebServer.Controllers
 
             existingRating.Rating = rating.Rating;
             _dataService.UpdateUserRating(existingRating);
-            return NoContent();
+            return Ok();
         }
 
         // DELETE: api/users/{userId}/ratings/{ratingId}
@@ -66,7 +66,7 @@ namespace WebServer.Controllers
             }
 
             _dataService.DeleteUserRating(ratingId);
-            return NoContent();
+            return Ok();
         }
     }
 }
