@@ -14,6 +14,7 @@ public class UserDTO
 
 public class UserRating
 {
+    public int RatingId { get; set; }
     public int UserId { get; set; }
     public string? MovieId { get; set; }
     public int Rating { get; set; }

@@ -11,10 +11,11 @@ namespace WebApi.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IDataService _dataService;
-
-    public UserController(IDataService dataService)
+    private readonly LinkGenerator _linkGenerator;
+    public UserController(IDataService dataService, LinkGenerator linkGenerator)
     {
         _dataService = dataService;
+        _linkGenerator = linkGenerator;
     }
 
     [HttpGet]
@@ -26,6 +27,8 @@ public class UserController : ControllerBase
         {
             return NotFound();
         }
+        var userDto = user.Adapt<UserDto>();
+        userDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserById), values: new { id = id });
         return Ok(user);
     }
 
@@ -105,6 +108,7 @@ public class UserController : ControllerBase
         }
 
         var userDto = user.Adapt<UserDto>();
+        userDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserById), values: new { id = user.Id });
         return Ok(userDto);
     }
 

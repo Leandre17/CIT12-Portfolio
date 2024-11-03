@@ -1,6 +1,9 @@
 using DataLayer;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using WebApi.Controllers;
+using WebServer.Models;
 
 namespace WebServer.Controllers
 {
@@ -9,10 +12,12 @@ namespace WebServer.Controllers
     public class ActorController : ControllerBase
     {
         private readonly IDataService _dataService;
+        private readonly LinkGenerator _linkGenerator;
 
-        public ActorController(IDataService dataService)
+        public ActorController(IDataService dataService, LinkGenerator linkGenerator)
         {
             _dataService = dataService;
+            _linkGenerator = linkGenerator;
         }
 
         [HttpGet]
@@ -30,21 +35,33 @@ namespace WebServer.Controllers
             {
                 return NotFound();
             }
-            return Ok(actor);
+            var actorDto = actor.Adapt<ActorDto>();
+            actorDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetActor), values: new { id });
+            return Ok(actorDto);
         }
 
         [HttpGet("search")]
         public IActionResult SearchActors([FromQuery] string q)
         {
             var actors = _dataService.SearchActors(q);
-            return Ok(actors);
+            var actorDtos = actors.Adapt<IEnumerable<ActorDto>>();
+            foreach (var actor in actorDtos)
+            {
+                actor.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetActor), values: new { id = actor.NConst });
+            }
+            return Ok(actorDtos);
         }
 
         [HttpGet("{id}/movies")]
         public IActionResult GetActorMovies(string id)
         {
             var movies = _dataService.GetActorMovies(id);
-            return Ok(movies);
+            var movieDtos = movies.Adapt<IEnumerable<MovieDto>>();
+            foreach (var movie in movieDtos)
+            {
+                movie.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(MoviesController.GetMovieByIdWSL), values: new { id = movie.Id });
+            }
+            return Ok(movieDtos);
         }
 
         [HttpPost]

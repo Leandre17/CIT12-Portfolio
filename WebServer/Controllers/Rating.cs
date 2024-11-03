@@ -1,4 +1,5 @@
 using DataLayer;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using WebServer.Models;
@@ -10,9 +11,11 @@ namespace WebServer.Controllers
     public class RatingController : ControllerBase
     {
         private readonly IDataService _dataService;
-        public RatingController(IDataService dataService)
+        private readonly LinkGenerator _linkGenerator;
+        public RatingController(IDataService dataService, LinkGenerator linkGenerator)
         {
             _dataService = dataService;
+            _linkGenerator = linkGenerator;
         }
 
         // GET: api/users/{userId}/ratings
@@ -20,6 +23,15 @@ namespace WebServer.Controllers
         public IActionResult GetUserRatings(int userId)
         {
             var ratings = _dataService.GetRatingsByUser(userId);
+            if (ratings == null)
+            {
+                return NotFound();
+            }
+            var ratingDtos = ratings.Adapt<IEnumerable<RatingDTO>>();
+            foreach (var rating in ratingDtos)
+            {
+                rating.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserRatings), values: new { ratingId = rating.RatingId });
+            }
             return Ok(ratings);
         }
 
@@ -32,7 +44,7 @@ namespace WebServer.Controllers
                 return BadRequest();
             }
             var newRating = _dataService.AddUserRating(userId, rating.MovieId, rating.Rating);
-            return CreatedAtAction(nameof(GetUserRatings), new { userId = userId }, rating);
+            return CreatedAtAction(nameof(GetRatingById), new { ratingId = newRating.RatingId }, rating);
         }
 
         // PUT: api/users/{userId}/ratings/{ratingId}
@@ -64,9 +76,22 @@ namespace WebServer.Controllers
             {
                 return NotFound();
             }
-
             _dataService.DeleteUserRating(ratingId);
             return Ok();
+        }
+
+        // GET: api/users/{userId}/ratings/{ratingId}
+        [HttpGet("{ratingId}")]
+        public IActionResult GetRatingById(int userId, int ratingId)
+        {
+            var rating = _dataService.GetRatingById(ratingId);
+            if (rating == null || rating.UserId != userId)
+            {
+                return NotFound();
+            }
+            var ratingDto = rating.Adapt<RatingDTO>();
+            ratingDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetRatingById), values: new { ratingId = rating.RatingId });
+            return Ok(ratingDto);
         }
     }
 }

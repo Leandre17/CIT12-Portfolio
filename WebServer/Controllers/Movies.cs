@@ -1,6 +1,8 @@
 ﻿using DataLayer;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using WebServer.Controllers;
+using WebServer.Models;
 
 namespace WebApi.Controllers;
 [ApiController]
@@ -8,10 +10,12 @@ namespace WebApi.Controllers;
 public class MoviesController : ControllerBase
 {
     private readonly IDataService _dataService;
+    private readonly LinkGenerator _linkGenerator;
 
-    public MoviesController(IDataService dataService)
+    public MoviesController(IDataService dataService, LinkGenerator linkGenerator)
     {
         _dataService = dataService;
+        _linkGenerator = linkGenerator;
     }
 
     // GET: api/movies/{id}
@@ -23,8 +27,11 @@ public class MoviesController : ControllerBase
         {
             return NotFound();
         }
+        var movieDto = movie.Adapt<MovieDto>();
+        movieDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetMovieByIdWSL), values: new { id = id });
         return Ok(movie);
     }
+
     // POST: api/movies
     [HttpPost]
     public IActionResult CreateMovie([FromBody] Movie movieDto)
@@ -131,13 +138,18 @@ public class MoviesController : ControllerBase
             return StatusCode(500, new { error = "An error occurred while retrieving movies." });
         }
     }
-    
+
     // GET: api/movies/search/{title}
     [HttpGet("search")]
     public IActionResult SearchMovies([FromQuery] string q)
     {
         var movies = _dataService.GetMoviesByTitle(q);
-        return Ok(movies);
+        var movieDtos = movies.Adapt<IEnumerable<MovieDto>>();
+        foreach (var movieDto in movieDtos)
+        {
+            movieDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetMovieByIdWSL), values: new { id = movieDto.Id });
+        }
+        return Ok(movieDtos);
     }
 
     // GET: api/movies/{id}/ratings
@@ -156,6 +168,11 @@ public class MoviesController : ControllerBase
         if (actors == null)
         {
             return NotFound();
+        }
+        var actorDtos = actors.Adapt<IEnumerable<ActorDto>>();
+        foreach (var actorDto in actorDtos)
+        {
+            actorDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(ActorController.GetActor), values: new { id = actorDto.NConst });
         }
         return Ok(actors);
     }

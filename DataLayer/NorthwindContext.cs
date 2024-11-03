@@ -59,7 +59,8 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<Bookmark>().Property(b => b.ItemId).HasColumnName("item_id");
 
         modelBuilder.Entity<UserRating>().ToTable("user_ratings");
-        modelBuilder.Entity<UserRating>().HasKey(ur => new { ur.UserId, ur.MovieId });
+        modelBuilder.Entity<UserRating>().HasKey(ur => ur.RatingId);
+        modelBuilder.Entity<UserRating>().Property(ur => ur.RatingId).HasColumnName("rating_id");
         modelBuilder.Entity<UserRating>().Property(ur => ur.UserId).HasColumnName("user_id");
         modelBuilder.Entity<UserRating>().Property(ur => ur.MovieId).HasColumnName("tconst");
         modelBuilder.Entity<UserRating>().Property(ur => ur.Rating).HasColumnName("rating");
