@@ -41,4 +41,8 @@ public interface IDataService
     bool DeleteUserRating(int ratingId);
     IEnumerable<UserRating> GetRatingsByUser(int userId);
     float GetAverageRatingForMovie(string movieId);
+
+    // search history methods
+    IEnumerable<SearchHistory> GetSearchHistoryByUser();
+    IEnumerable<SearchHistory> GetSearchHistoryByUser(int userId);
 }

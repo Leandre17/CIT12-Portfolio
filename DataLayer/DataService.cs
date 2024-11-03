@@ -277,5 +277,17 @@ public class DataService : IDataService
         var db = new NorthwindContext();
         return db.Actors.Where(a => a.KnownForTitles.Contains(movieId)).ToList();
     }
+
+    public IEnumerable<SearchHistory> GetSearchHistoryByUser()
+    {
+        var db = new NorthwindContext();
+        return db.SearchHistories.Where(s => s.UserId == 1).ToList();
+    }
+
+    public IEnumerable<SearchHistory> GetSearchHistoryByUser(int userId)
+    {
+        var db = new NorthwindContext();
+        return db.SearchHistories.Where(s => s.UserId == userId).ToList();
+    }
 }
 

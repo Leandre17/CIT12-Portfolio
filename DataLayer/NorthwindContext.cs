@@ -15,6 +15,7 @@ internal class NorthwindContext : DbContext
     public DbSet<Bookmark> Bookmarks { get; set; }
     public DbSet<UserRating> UserRatings { get; set; }
     public DbSet<Actor> Actors { get; set; }
+    public DbSet<SearchHistory> SearchHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -71,6 +72,12 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<Actor>().Property(a => a.DeathYear).HasColumnName("deathyear");
         modelBuilder.Entity<Actor>().Property(a => a.PrimaryProfession).HasColumnName("primaryprofession");
         modelBuilder.Entity<Actor>().Property(a => a.KnownForTitles).HasColumnName("knownfortitles");
+
+        modelBuilder.Entity<SearchHistory>().ToTable("search_history");
+        modelBuilder.Entity<SearchHistory>().HasKey(sh => sh.Id);
+        modelBuilder.Entity<SearchHistory>().Property(sh => sh.Id).HasColumnName("search_id");
+        modelBuilder.Entity<SearchHistory>().Property(sh => sh.UserId).HasColumnName("user_id");
+        modelBuilder.Entity<SearchHistory>().Property(sh => sh.SearchTerm).HasColumnName("search_term");
     }
     public IQueryable<Movie> string_search(string searchTitle, int userId)
         => FromExpression(() => string_search(searchTitle, userId));
