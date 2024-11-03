@@ -24,7 +24,12 @@ namespace WebServer.Controllers
         public IActionResult GetActors([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var actors = _dataService.GetActors(page, pageSize);
-            return Ok(actors);
+            var actorDtos = actors.Adapt<IEnumerable<ActorDto>>();
+            foreach (var actor in actorDtos)
+            {
+                actor.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetActor), values: new { id = actor.NConst });
+            }
+            return Ok(actorDtos);
         }
 
         [HttpGet("{id}")]
