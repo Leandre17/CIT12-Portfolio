@@ -29,7 +29,7 @@ public class UserController : ControllerBase
         }
         var userDto = user.Adapt<UserDto>();
         userDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserById), values: new { id = id });
-        return Ok(user);
+        return Ok(userDto);
     }
 
     [HttpPost]

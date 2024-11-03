@@ -9,10 +9,12 @@ namespace WebApi.Controllers;
 public class BookmarkController : ControllerBase
 {
     private readonly IDataService _dataService;
+    private readonly LinkGenerator _linkGenerator;
 
-    public BookmarkController(IDataService dataService)
+    public BookmarkController(IDataService dataService, LinkGenerator linkGenerator)
     {
         _dataService = dataService;
+        _linkGenerator = linkGenerator;
     }
 
     [HttpGet]
@@ -24,6 +26,10 @@ public class BookmarkController : ControllerBase
             return NotFound();
         }
         var bookmarkDtos = bookmarks.Adapt<IEnumerable<BookmarkDto>>();
+        foreach (var bookmark in bookmarkDtos)
+        {
+            bookmark.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserBookmarks), values: new { userId });
+        }
         return Ok(bookmarkDtos);
     }
 

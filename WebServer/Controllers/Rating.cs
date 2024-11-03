@@ -32,7 +32,7 @@ namespace WebServer.Controllers
             {
                 rating.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserRatings), values: new { ratingId = rating.RatingId });
             }
-            return Ok(ratings);
+            return Ok(ratingDtos);
         }
 
         // POST: api/users/{userId}/ratings

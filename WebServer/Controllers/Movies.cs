@@ -29,7 +29,7 @@ public class MoviesController : ControllerBase
         }
         var movieDto = movie.Adapt<MovieDto>();
         movieDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetMovieByIdWSL), values: new { id = id });
-        return Ok(movie);
+        return Ok(movieDto);
     }
 
     // POST: api/movies
@@ -174,6 +174,6 @@ public class MoviesController : ControllerBase
         {
             actorDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(ActorController.GetActor), values: new { id = actorDto.NConst });
         }
-        return Ok(actors);
+        return Ok(actorDtos);
     }
 }
