@@ -145,10 +145,6 @@ public class MoviesController : ControllerBase
     public IActionResult GetMovieRatings(string id)
     {
         var ratings = _dataService.GetMovieRatings(id);
-        if (ratings == null)
-        {
-            return NotFound();
-        }
         return Ok(ratings);
     }
 

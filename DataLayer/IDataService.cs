@@ -27,6 +27,17 @@ public interface IDataService
     bool DeleteMovie(string movieId);
     double GetMovieRatings(string movieId);
     IEnumerable<Actor> GetActorsInMovie(string movieId);
+
+    // actor methods
+    Actor? GetActorById(string actorId);
+    IEnumerable<Actor> GetActors(int page, int pageSize);
+    IEnumerable<Actor> SearchActors(string query);
+    Actor AddActor(Actor actor);
+    bool UpdateActor(string actorId, Actor actor);
+    bool DeleteActor(string actorId);
+    IEnumerable<Movie> GetActorMovies(string actorId);
+
+
     // bookmark methods
     IEnumerable<Bookmark> GetBookmarksByUser(int userId);
     Bookmark? GetUserBookmark(int userId, int bookmarkId);

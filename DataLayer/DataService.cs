@@ -289,5 +289,67 @@ public class DataService : IDataService
         var db = new NorthwindContext();
         return db.SearchHistories.Where(s => s.UserId == userId).ToList();
     }
-}
 
+    public IEnumerable<Actor> GetActors(int page, int pageSize)
+    {
+        var db = new NorthwindContext();
+        return db.Actors.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    }
+
+    public Actor? GetActorById(string actorId)
+    {
+        var db = new NorthwindContext();
+        return db.Actors.Find(actorId);
+    }
+
+    public IEnumerable<Actor> SearchActors(string query)
+    {
+        var db = new NorthwindContext();
+        return db.Actors.Where(a => a.PrimaryName.Contains(query)).ToList();
+    }
+
+    public Actor AddActor(Actor actor)
+    {
+        var db = new NorthwindContext();
+        db.Actors.Add(actor);
+        db.SaveChanges();
+        return actor;
+    }
+
+    public bool UpdateActor(string actorId, Actor actor)
+    {
+        var db = new NorthwindContext();
+        var existingActor = db.Actors.Find(actorId);
+        if (existingActor == null) return false;
+
+        existingActor.PrimaryName = actor.PrimaryName;
+        existingActor.BirthYear = actor.BirthYear;
+        existingActor.DeathYear = actor.DeathYear;
+        existingActor.PrimaryProfession = actor.PrimaryProfession;
+        existingActor.KnownForTitles = actor.KnownForTitles;
+        db.SaveChanges();
+        return true;
+    }
+
+    public bool DeleteActor(string actorId)
+    {
+        var db = new NorthwindContext();
+        var actor = db.Actors.Find(actorId);
+        if (actor == null) return false;
+
+        db.Actors.Remove(actor);
+        db.SaveChanges();
+        return true;
+    }
+
+    public IEnumerable<Movie> GetActorMovies(string actorId)
+    {
+        var db = new NorthwindContext();
+        var actor = db.Actors.Find(actorId);
+        var movieIds = actor?.KnownForTitles?.Split(',');
+        Console.WriteLine($"Actor {actorId} has {movieIds?.Length} known movies.");
+        if (movieIds == null) throw new ArgumentException("Actor has no known movies.");
+        return db.Movies.Where(m => movieIds.Contains(m.Id)).ToList();
+    }
+
+}
