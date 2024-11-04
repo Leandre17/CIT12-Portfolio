@@ -20,9 +20,9 @@ internal class NorthwindContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         Env.Load();
-        string host = Env.GetString("DB_HOST");
-        string db = Env.GetString("DB_DATABASE");
-        string uid = Env.GetString("DB_USERNAME");
+        string host = Env.GetString("DB_HOST") ?? "localhost";
+        string db = Env.GetString("DB_DATABASE") ?? "IMDB";
+        string uid = Env.GetString("DB_USERNAME") ?? "postgres";
         string pwd = Env.GetString("DB_PASSWORD");
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
