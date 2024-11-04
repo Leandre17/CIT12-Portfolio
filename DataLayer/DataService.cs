@@ -187,7 +187,8 @@ public class DataService : IDataService
         Bookmark newBookmark = new Bookmark
         {
             UserId = userId,
-            ItemId = movieId
+            ItemId = movieId,
+            Id = new Random().Next(1, 1000)
         };
         db.Bookmarks.Add(newBookmark);
         db.SaveChanges();
@@ -218,7 +219,8 @@ public class DataService : IDataService
         {
             UserId = userId,
             MovieId = movieId,
-            Rating = rating
+            Rating = rating,
+            RatingId = new Random().Next(1, 1000)
         };
         db.UserRatings.Add(newUserRating);
         db.SaveChanges();

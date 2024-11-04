@@ -121,4 +121,100 @@ public class DataServiceTests
         var isdeleted = _dataService.DeleteMovie("tt12345678");
         Assert.True(isdeleted);
     }
+
+    [Fact]
+    public void TestUpdateMovie()
+    {
+        var movie = new Movie
+        {
+            Id = "tt12345678",
+            Title = "Test Movie",
+            Year = "2021",
+            Genre = "Action"
+        };
+        var newMovie = _dataService.CreateMovie(movie);
+        Assert.Equal("Test Movie", newMovie.Title);
+
+        newMovie.Title = "Updated Movie";
+        var updatedMovieBool = _dataService.UpdateMovie("tt12345678", newMovie);
+        Assert.True(updatedMovieBool);
+        var updatedMovie = _dataService.GetMovieById("tt12345678");
+        Assert.Equal("Updated Movie", updatedMovie.Title);
+
+        var isdeleted = _dataService.DeleteMovie("tt12345678");
+        Assert.True(isdeleted);
+    }
+
+    [Fact]
+    public void TestGetMoviesByGenre()
+    {
+        var movies = _dataService.GetMoviesByGenre("Action");
+        Assert.Equal(699, movies.Count());
+    }
+
+    [Fact]
+    public void TestGetMoviesByYear()
+    {
+        var movies = _dataService.GetMoviesByYear("2021");
+        Assert.Equal(13725, movies.Count());
+    }
+
+    [Fact]
+    public void TestCreateUser()
+    {
+        var user = new User
+        {
+            Name = "Test User",
+            Email = "t.t@t.com",
+            Password = "password",
+            Id = 100
+        };
+        var newUser = _dataService.CreateUser(user);
+        Assert.Equal("Test User", newUser.Name);
+
+        var createdUser = _dataService.GetUserById(newUser.Id);
+        Assert.Equal("Test User", createdUser.Name);
+
+        var isdeleted = _dataService.DeleteUser(newUser.Id);
+        Assert.True(isdeleted);
+    }
+
+    [Fact]
+    public void TestCreateBookmark()
+    {
+        var bookmark = new Bookmark
+        {
+            Id = 100,
+            UserId = 1,
+            ItemId = "tt12345678"
+        };
+        var newBookmark = _dataService.AddBookmark(1, "tt12345678");
+        Assert.Equal("tt12345678", newBookmark.ItemId);
+
+        var createdBookmark = _dataService.GetUserBookmark(1, newBookmark.Id);
+        Assert.Equal("tt12345678", createdBookmark.ItemId);
+
+        var isdeleted = _dataService.DeleteBookmark(newBookmark.Id, 1);
+        Assert.True(isdeleted);
+    }
+
+    // [Fact]
+    // public void TestCreateRating()
+    // {
+    //     var rating = new UserRating
+    //     {
+    //         RatingId = 100,
+    //         UserId = 1,
+    //         MovieId = "tt12345678",
+    //         Rating = 1
+    //     };
+    //     var newRating = _dataService.AddUserRating(1, "tt12345678", 1);
+    //     Assert.Equal(1, newRating.Rating);
+
+    //     var createdRating = _dataService.GetRatingById(newRating.RatingId);
+    //     Assert.Equal(1, createdRating.Rating);
+
+    //     var isdeleted = _dataService.DeleteUserRating(newRating.RatingId);
+    //     Assert.True(isdeleted);
+    // }
 }

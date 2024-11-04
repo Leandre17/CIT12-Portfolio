@@ -24,8 +24,8 @@ internal class NorthwindContext : DbContext
         string db = Env.GetString("DB_DATABASE") ?? "IMDB";
         string uid = Env.GetString("DB_USERNAME") ?? "postgres";
         string pwd = Env.GetString("DB_PASSWORD");
-        optionsBuilder.EnableSensitiveDataLogging();
-        optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+        // optionsBuilder.EnableSensitiveDataLogging();
+        // optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
         optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
     }
 
