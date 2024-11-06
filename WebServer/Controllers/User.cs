@@ -3,6 +3,12 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models;
 using WebServer.Services;
+using System.Security.Claims;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System;
+
 
 namespace WebApi.Controllers;
 [ApiController]
@@ -44,7 +50,7 @@ public class UserController : ControllerBase
         }
 
         var user = createUserDto.Adapt<User>();
-        (user.Password, user.Salt) = Hashing.Hash(user.Password);
+        (user.Password, user.Salt) = _hashing.Hash(user.Password);
         var createdUser = _dataService.CreateUser(user);
 
         if (createdUser == null)
@@ -109,7 +115,7 @@ public class UserController : ControllerBase
         {
             return BadRequest();
         }
-        if (!Hashing.Verify(loginUserDto.Password, user.Password, user.Salt))
+        if (!_hashing.Verify(loginUserDto.Password, user.Password, user.Salt))
         {
             return BadRequest();
         }
