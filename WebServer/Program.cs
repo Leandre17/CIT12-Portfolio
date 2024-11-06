@@ -12,7 +12,7 @@ builder.Services.AddSingleton<IDataService, DataService>();
 builder.Services.AddSingleton(new Hashing());
 builder.Services.AddAuthorization();
 // Add services to the container.
-builder.Services.AddControllers(); // <-- Add this line
+builder.Services.AddControllers();
 var secret = "this is my custom Secret key for authnetication";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options => options.TokenValidationParameters = new TokenValidationParameters
