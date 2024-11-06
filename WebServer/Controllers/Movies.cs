@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Controllers;
 using WebServer.Models;
@@ -33,6 +34,7 @@ public class MoviesController : ControllerBase
     }
 
     // POST: api/movies
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult CreateMovie([FromBody] Movie movieDto)
     {
@@ -41,6 +43,7 @@ public class MoviesController : ControllerBase
     }
 
     // PUT: api/movies/{id}
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public IActionResult UpdateMovie(string id, [FromBody] Movie movieDto)
     {
@@ -53,6 +56,7 @@ public class MoviesController : ControllerBase
     }
 
     // DELETE: api/movies/{id}
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public IActionResult DeleteMovie(string id)
     {
