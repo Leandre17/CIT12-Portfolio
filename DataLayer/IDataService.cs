@@ -11,10 +11,10 @@ public interface IDataService
     User? AuthenticateUser(string username, string password);
     User RegisterUser(string username, string email, string password);
     User? GetUserById(int userId);
+    User? GetUser(string email);
     User CreateUser(User user);
     bool UpdateUser(User user);
     bool DeleteUser(int userId);
-    bool LogoutUser(int userId);
 
     // movie methods
     Movie? GetMovieById(string movieId);

@@ -2,6 +2,7 @@ using DataLayer;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models;
+using WebServer.Services;
 
 namespace WebApi.Controllers;
 [ApiController]
@@ -12,10 +13,12 @@ public class UserController : ControllerBase
 {
     private readonly IDataService _dataService;
     private readonly LinkGenerator _linkGenerator;
-    public UserController(IDataService dataService, LinkGenerator linkGenerator)
+    private readonly Hashing _hashing;
+    public UserController(IDataService dataService, LinkGenerator linkGenerator, Hashing hashing)
     {
         _dataService = dataService;
         _linkGenerator = linkGenerator;
+        _hashing = hashing;
     }
 
     [HttpGet]
@@ -41,6 +44,7 @@ public class UserController : ControllerBase
         }
 
         var user = createUserDto.Adapt<User>();
+        (user.Password, user.Salt) = Hashing.Hash(user.Password);
         var createdUser = _dataService.CreateUser(user);
 
         if (createdUser == null)
@@ -68,7 +72,7 @@ public class UserController : ControllerBase
 
         updateUserDto.Adapt(existingUser);
         var IsUpdatedUser = _dataService.UpdateUser(existingUser);
-        if (IsUpdatedUser)
+        if (!IsUpdatedUser)
         {
             return StatusCode(500, "A problem happened while handling your request.");
         }
@@ -100,29 +104,34 @@ public class UserController : ControllerBase
         {
             return BadRequest();
         }
-
-        var user = _dataService.AuthenticateUser(loginUserDto.Email, loginUserDto.Password);
+        var user = _dataService.GetUser(loginUserDto.Email);
         if (user == null)
         {
-            return Unauthorized();
+            return BadRequest();
         }
+        if (!Hashing.Verify(loginUserDto.Password, user.Password, user.Salt))
+        {
+            return BadRequest();
+        }
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+        var secret = "this is a secret key for authentication";
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(60),
+            signingCredentials: creds
+        );
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         var userDto = user.Adapt<UserDto>();
         userDto.Link = _linkGenerator.GetUriByAction(HttpContext, nameof(GetUserById), values: new { id = user.Id });
-        return Ok(userDto);
-    }
-
-    [HttpPost("logout")]
-    public IActionResult LogoutUser()
-    {
-        // not implemented in the data service
-        bool isLoggedOut = _dataService.LogoutUser(1);
-
-        if (!isLoggedOut)
-        {
-            return StatusCode(500, "A problem happened while handling your request.");
-        }
-
-        return Ok();
+        return Ok(tokenString);
     }
 }

@@ -24,8 +24,8 @@ internal class NorthwindContext : DbContext
         string db = Env.GetString("DB_DATABASE") ?? "IMDB";
         string uid = Env.GetString("DB_USERNAME") ?? "postgres";
         string pwd = Env.GetString("DB_PASSWORD");
-        // optionsBuilder.EnableSensitiveDataLogging();
-        // optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+        optionsBuilder.EnableSensitiveDataLogging();
+        optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
         optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
     }
 
@@ -37,11 +37,12 @@ internal class NorthwindContext : DbContext
         modelBuilder.Entity<User>().Property(u => u.Name).HasColumnName("username");
         modelBuilder.Entity<User>().Property(u => u.Email).HasColumnName("email");
         modelBuilder.Entity<User>().Property(u => u.Password).HasColumnName("password");
+        modelBuilder.Entity<User>().Property(u => u.Salt).HasColumnName("salt");
+        modelBuilder.Entity<User>().Property(u => u.Role).HasColumnName("role");
 
         modelBuilder.Entity<Movie>().ToTable("title_basics");
         modelBuilder.Entity<Movie>().HasKey(m => m.Id);
         modelBuilder.Entity<Movie>().Property(m => m.Id).HasColumnName("tconst");
-        // modelBuilder.Entity<Movie>().Property(m => m.TitleType).HasColumnName("titletype");
         modelBuilder.Entity<Movie>().Property(m => m.Title).HasColumnName("primarytitle");
         modelBuilder.Entity<Movie>().Property(m => m.Year).HasColumnName("startyear");
         modelBuilder.Entity<Movie>().Property(m => m.Genre).HasColumnName("genres");

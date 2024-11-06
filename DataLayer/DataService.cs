@@ -27,12 +27,6 @@ public class DataService : IDataService
         return true;
     }
 
-    public bool LogoutUser(int userId)
-    {
-        return true;
-        // Implement logout logic here if needed
-    }
-
     public IEnumerable<Movie> GetMoviesByYear(string year)
     {
         var db = new NorthwindContext();
@@ -119,6 +113,12 @@ public class DataService : IDataService
     {
         var db = new NorthwindContext();
         return db.Users.Find(userId);
+    }
+
+    public User? GetUser(string email)
+    {
+        var db = new NorthwindContext();
+        return db.Users.FirstOrDefault(u => u.Email == email);
     }
 
     public bool UpdateUser(User user)
