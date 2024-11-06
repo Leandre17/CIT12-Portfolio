@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DotNetEnv;
 
 namespace DataLayer;
 
@@ -16,17 +15,20 @@ internal class NorthwindContext : DbContext
     public DbSet<UserRating> UserRatings { get; set; }
     public DbSet<Actor> Actors { get; set; }
     public DbSet<SearchHistory> SearchHistories { get; set; }
+    private string _connectionString;
+
+    public NorthwindContext(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Env.Load();
-        string host = Env.GetString("DB_HOST") ?? "localhost";
-        string db = Env.GetString("DB_DATABASE") ?? "IMDB";
-        string uid = Env.GetString("DB_USERNAME") ?? "postgres";
-        string pwd = Env.GetString("DB_PASSWORD");
+
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-        optionsBuilder.UseNpgsql($"host={host};db={db};uid={uid};pwd={pwd}");
+        optionsBuilder.UseNpgsql(_connectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -3,7 +3,7 @@ namespace Assignment4.Tests;
 
 public class DataServiceTests
 {
-    private readonly IDataService _dataService = new DataService();
+    private readonly IDataService _dataService = new DataService("host=localhost;db=IMDB;uid=postgres;pwd=");
     [Fact]
     public void TestGetUser()
     {

@@ -7,8 +7,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("portfolio");
 
-builder.Services.AddSingleton<IDataService, DataService>();
+builder.Services.AddSingleton<IDataService, DataService>(x => new DataService(connectionString));
 builder.Services.AddSingleton(new Hashing());
 builder.Services.AddAuthorization();
 // Add services to the container.
